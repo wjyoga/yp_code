@@ -64,43 +64,74 @@ class process_data_tool:
     def cal_cos_dis(self, A, B):
         return 1 - np.dot(A, B) / (np.linalg.norm(A) * np.linalg.norm(B))
 
+    # Calculates similarity of two datas
+    # data1 : str
+    # data2 : str
+    # choose : int --> 1 : Euclidean distance | 2 : Cosine distance
+    def cal_similarity(self, data1, data2, choose = 2):
+        TF_IDF_list1 = jieba.analyse.extract_tags(data1, topK = 10, withWeight = True)
+        TF_IDF_list2 = jieba.analyse.extract_tags(data2, topK = 10, withWeight = True)
+        TF_IDF_dict1 = {}
+        for key, value in TF_IDF_list1:
+            TF_IDF_dict1[key] = value
+        TF_IDF_dict2 = {}
+        for key, value in TF_IDF_list2:
+            TF_IDF_dict2[key] = value
+        arr1 = []
+        arr2 = []
+        for key in TF_IDF_dict1:
+            if key in TF_IDF_dict2:
+                print(key)
+                arr1.append(round(float(TF_IDF_dict1[key]), 2))
+                arr2.append(round(float(TF_IDF_dict2[key]), 2))
+        arr1.sort(reverse = True)
+        arr2.sort(reverse = True)
+        print(arr1, arr2)
+        if 1 == choose:
+            return self.cal_euc_dis(np.array(arr1), np.array(arr2))
+        elif 2 == choose:
+            return self.cal_cos_dis(np.array(arr1), np.array(arr2))
+        else:
+            print("No choose : ", choose)
+            return 0
+
 
 
 if __name__ == '__main__':
+    # print(type(jieba.analyse.extract_tags("交通银行分行西直门北大街支行", topK = 10, withWeight = True)))
+    # print(jieba.analyse.extract_tags("交通银行分行西直门北大街支行", topK = 10, withWeight = True))
     tool = process_data_tool()
-    data_list = list()
-    data_list.append("中国航空工业第一集团公司科学技术委员会")
-    data_list.append("中国农业银行市分行营业部")
-    data_list.append("中国印刷总公司新华印刷厂")
-    data_list.append("一电一百广告有限公司")
-    data_list.append("上海因赛尼狄投资咨询中心普通合伙")
-    data_list.append("交通银行分行西直门北大街支行, 交通银行分行西直门支行, 交通银行分行东直门支行")
-    # data_list.append("交通银行分行西直门支行")
-    # data_list.append("交通银行分行东直门支行")
-    for data in data_list:
-        print(data)
-        for x, w in jieba.analyse.extract_tags(data, topK = 10, withWeight = True):
-            print('%s %s' % (x, w))
-        print("=============================")
+    # data_list = list()
+    # data_list.append("中国航空工业第一集团公司科学技术委员会")
+    # data_list.append("中国农业银行市分行营业部")
+    # data_list.append("中国印刷总公司新华印刷厂")
+    # data_list.append("一电一百广告有限公司")
+    # data_list.append("上海因赛尼狄投资咨询中心普通合伙")
+    # data_list.append("交通银行分行西直门北大街支行, 交通银行分行西直门支行, 交通银行分行东直门支行")
+    # # data_list.append("交通银行分行西直门支行")
+    # # data_list.append("交通银行分行东直门支行")
+    # for data in data_list:
+    #     print(data)
+    #     for x, w in jieba.analyse.extract_tags(data, topK = 10, withWeight = True):
+    #         print('%s %s' % (x, w))
+    #     print("=============================")
         # result_words = tool.remove_stop_words(data)
         # print(result_words)
-    
-    A1 = np.array([2.19, 1.72, 1.61, 1.56])
-    B = np.array([2.7, 2.1, 2.0, 1.94])
 
-    A2 = np.array([1.72, 1.61, 1.56])
-    C = np.array([2.16, 2.02, 1.95])
+    # data1 = "交通银行分行西直门北大街支行"
+    # data2 = "交通银行分行西直门支行"
+    # data3 = "交通银行分行东直门支行"
 
-    # Euclidean distance
-    print("============Euclidean distance=============")
-    
-    print("A1 and B : ", tool.cal_euc_dis(A1, B))
-    print("A2 and C : ", tool.cal_euc_dis(A2, C))
+    data1 = "天伦度假发展有限公司客户服务部"
+    data2 = "天伦度假发展有限公司客户服务"
+    data3 = "天伦度假发展有限公司第一分公司"
 
-    # Cosine distance
-    print("============Cosine distance=============")
-    print("A1 and B : ", tool.cal_cos_dis(A1, B))
-    print("A2 and C : ", tool.cal_cos_dis(A2, C))
+    # data1 = "成都农商银行市分行营业部"
+    # data2 = "中国农业银行成都分行"
+    # data3 = "成都农商银行分行"
+
+    print("A1 and B = ", tool.cal_similarity(data1, data2, 1))
+    print("A2 and C = ", tool.cal_similarity(data1, data3, 1))
 
 
 
